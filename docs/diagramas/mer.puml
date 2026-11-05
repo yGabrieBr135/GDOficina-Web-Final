@@ -1,0 +1,82 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam monochrome true
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam classAttributeIconSize 0
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 14
+skinparam classBackgroundColor white
+skinparam classBorderColor black
+skinparam ArrowColor black
+skinparam nodesep 70
+skinparam ranksep 90
+hide circle
+hide methods
+title GD Oficina Web — MER (modelo lógico)
+
+entity CLIENTES {
+  * id: BIGINT <<PK>>
+  --
+  * nome: TEXT
+  * telefone: TEXT
+  email: TEXT
+}
+
+entity VEICULOS {
+  * id: BIGINT <<PK>>
+  --
+  * cliente_id: BIGINT <<FK>>
+  * placa: TEXT <<UK>>
+  * marca: TEXT
+  * modelo: TEXT
+  * ano: INTEGER
+}
+
+entity SERVICOS {
+  * id: BIGINT <<PK>>
+  --
+  * nome: TEXT
+  descricao: TEXT
+  * preco: NUMERIC(12,2)
+}
+
+entity ORDENS_SERVICO {
+  * id: BIGINT <<PK>>
+  --
+  * veiculo_id: BIGINT <<FK>>
+  * data_abertura: DATE
+  * status: TEXT
+  observacoes: TEXT
+}
+
+entity ITENS_ORDEM {
+  * id: BIGINT <<PK>>
+  --
+  * ordem_id: BIGINT <<FK>>
+  * servico_id: BIGINT <<FK>>
+  * quantidade: INTEGER
+  * valor_unitario: NUMERIC(12,2)
+}
+
+CLIENTES ||--o{ VEICULOS : possui
+VEICULOS ||--o{ ORDENS_SERVICO : recebe
+ORDENS_SERVICO ||--|{ ITENS_ORDEM : contém
+SERVICOS ||--o{ ITENS_ORDEM : compõe
+
+note bottom of ITENS_ORDEM
+  UNIQUE(ordem_id, servico_id)
+  quantidade entre 1 e 9999
+  valor_unitario >= 0
+end note
+
+legend bottom
+  PK = chave primária    FK = chave estrangeira    UK = valor único
+  Asterisco = atributo obrigatório
+  || = exatamente um    o{ = zero ou muitos    |{ = um ou muitos
+  Uma ordem exige ao menos um item (validação no caso de uso).
+  PostgreSQL proposto: valores decimais exatos; datas do tipo DATE.
+  IDs BIGINT gerados pelo banco. Total e subtotal calculados, sem colunas próprias.
+endlegend
+@enduml

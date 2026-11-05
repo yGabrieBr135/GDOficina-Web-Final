@@ -1,0 +1,136 @@
+@startuml
+!pragma layout smetana
+skinparam backgroundColor white
+skinparam monochrome true
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam classAttributeIconSize 0
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 14
+skinparam classBackgroundColor white
+skinparam classBorderColor black
+skinparam ArrowColor black
+skinparam nodesep 70
+skinparam ranksep 90
+hide circle
+title GD Oficina Web — Diagrama de classes
+
+class Cliente {
+  -id: Long
+  -nome: String
+  -telefone: String
+  -email: String
+  --
+  +getId(): Long
+  +setId(id: Long): void
+  +getNome(): String
+  +setNome(nome: String): void
+  +getTelefone(): String
+  +setTelefone(telefone: String): void
+  +getEmail(): String
+  +setEmail(email: String): void
+}
+
+class Veiculo {
+  -id: Long
+  -cliente: Cliente
+  -placa: String
+  -marca: String
+  -modelo: String
+  -ano: int
+  --
+  +getId(): Long
+  +setId(id: Long): void
+  +getCliente(): Cliente
+  +setCliente(cliente: Cliente): void
+  +getPlaca(): String
+  +setPlaca(placa: String): void
+  +getMarca(): String
+  +setMarca(marca: String): void
+  +getModelo(): String
+  +setModelo(modelo: String): void
+  +getAno(): int
+  +setAno(ano: int): void
+}
+
+class Servico {
+  -id: Long
+  -nome: String
+  -descricao: String
+  -preco: BigDecimal
+  --
+  +getId(): Long
+  +setId(id: Long): void
+  +getNome(): String
+  +setNome(nome: String): void
+  +getDescricao(): String
+  +setDescricao(descricao: String): void
+  +getPreco(): BigDecimal
+  +setPreco(preco: BigDecimal): void
+}
+
+class OrdemServico {
+  -id: Long
+  -veiculo: Veiculo
+  -dataAbertura: LocalDate
+  -status: StatusOrdem
+  -observacoes: String
+  -itens: List<ItemOrdem>
+  --
+  +getId(): Long
+  +setId(id: Long): void
+  +getVeiculo(): Veiculo
+  +setVeiculo(veiculo: Veiculo): void
+  +getDataAbertura(): LocalDate
+  +setDataAbertura(dataAbertura: LocalDate): void
+  +getStatus(): StatusOrdem
+  +setStatus(status: StatusOrdem): void
+  +getObservacoes(): String
+  +setObservacoes(observacoes: String): void
+  +getItens(): List<ItemOrdem>
+  +setItens(itens: List<ItemOrdem>): void
+  +getTotal(): BigDecimal
+}
+
+class ItemOrdem {
+  -id: Long
+  -ordem: OrdemServico
+  -servico: Servico
+  -quantidade: int
+  -valorUnitario: BigDecimal
+  --
+  +getId(): Long
+  +setId(id: Long): void
+  +getServico(): Servico
+  +setServico(servico: Servico): void
+  +getQuantidade(): int
+  +setQuantidade(quantidade: int): void
+  +getValorUnitario(): BigDecimal
+  +setValorUnitario(valorUnitario: BigDecimal): void
+  +getOrdem(): OrdemServico
+  +setOrdem(ordem: OrdemServico): void
+  +getSubtotal(): BigDecimal
+}
+
+enum StatusOrdem {
+  ABERTA
+  EM_ANDAMENTO
+  CONCLUIDA
+  CANCELADA
+}
+
+hide StatusOrdem methods
+
+Cliente "1" <-- "0..*" Veiculo : pertence a
+Veiculo "1" <-- "0..*" OrdemServico : atende
+OrdemServico "1" *-- "1..*" ItemOrdem : contém
+Servico "1" <-- "0..*" ItemOrdem : referencia
+OrdemServico ..> StatusOrdem : utiliza
+
+legend bottom
+  - atributo privado    + método público
+  1 = exatamente um    0..* = zero ou muitos    1..* = um ou muitos
+  Losango preenchido = composição: os itens pertencem à ordem.
+  Modelo proposto para entidades JPA; implementação na próxima etapa.
+endlegend
+@enduml

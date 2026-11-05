@@ -1,0 +1,11 @@
+.idea/
+*.iml
+target/
+out/
+dados/
+.env
+*.db
+*.mv.db
+*.trace.db
+*.lock.db
+.DS_Store
